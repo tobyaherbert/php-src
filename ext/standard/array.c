@@ -5929,9 +5929,9 @@ PHP_FUNCTION(array_sum)
 	ZVAL_LONG(return_value, 0);
 
 	ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(input), entry) {
-		if (Z_TYPE_P(entry) == IS_ARRAY || Z_TYPE_P(entry) == IS_OBJECT) {
-			continue;
-		}
+		uint8_t entry_type = Z_TYPE_P(entry);
+		if (entry_type == IS_REFERENCE) entry_type = Z_TYPE_P(Z_REFVAL_P(entry));
+		if (entry_type == IS_ARRAY || entry_type == IS_OBJECT) continue;
 		ZVAL_COPY(&entry_n, entry);
 		convert_scalar_to_number(&entry_n);
 		fast_add_function(return_value, return_value, &entry_n);
